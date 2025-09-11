@@ -48,9 +48,13 @@ public class ViewController {
     }
     
     @GetMapping("/")
+    public String rootView() {
+        // Redirect to home for authenticated users
+        return "redirect:/home";
+    }
+    
+    @GetMapping("/home")
     public String homeView() {
-        // Redirect to home or login based on authentication status
-        // For now, just return home
         return "home";
     }
     

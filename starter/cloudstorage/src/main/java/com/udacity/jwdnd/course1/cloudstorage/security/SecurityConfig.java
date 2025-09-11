@@ -1,13 +1,34 @@
 package com.udacity.jwdnd.course1.cloudstorage.security;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    
+    private final CustomUserDetailsService customUserDetailsService;
+    private final CustomPasswordEncoder customPasswordEncoder;
+    
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, 
+                         CustomPasswordEncoder customPasswordEncoder) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.customPasswordEncoder = customPasswordEncoder;
+    }
 
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(customPasswordEncoder);
+        return new ProviderManager(authProvider);
+    }
+    
     @Bean
     SecurityFilterChain security(HttpSecurity http) throws Exception {
         http
