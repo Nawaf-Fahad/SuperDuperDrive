@@ -11,10 +11,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class SignupService implements AuthService {
     private final UserRepository users;
 
-    public AuthServiceImpl(UserRepository users) {
+    public SignupService(UserRepository users) {
         this.users = users;
     }
 
