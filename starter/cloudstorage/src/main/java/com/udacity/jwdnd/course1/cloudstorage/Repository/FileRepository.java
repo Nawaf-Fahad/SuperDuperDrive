@@ -1,10 +1,10 @@
 package com.udacity.jwdnd.course1.cloudstorage.Repository;
 
 import com.udacity.jwdnd.course1.cloudstorage.Entity.FileEntity;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity,Long> {
-    List<FileEntity> listForUser(Long userId);
+    @Query("select f from FileEntity f where f.user.id = :userId")
+    List<FileEntity> listForUser(@Param("userId") Long userId);
 
-    Optional<FileEntity> findByIdAndUsername(Long id, Long userId);
+    @Query("select f from FileEntity f where f.id = :id and f.user.id = :userId")
+    Optional<FileEntity> findByIdAndUsername(@Param("id") Long id, @Param("userId") Long userId);
 
     @Modifying
     @Transactional

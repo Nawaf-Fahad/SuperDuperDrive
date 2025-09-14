@@ -56,12 +56,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr th:each="file : ${files}">
                             <td>
-                                <a target="_blank" class="btn btn-success">View</a>
-                                <a class="btn btn-danger">Delete</a>
+                                <a th:href="@{'/file/view/' + ${file.id}}" target="_blank" class="btn btn-success">View</a>
+                                <a th:href="@{'/file/delete/' + ${file.id}}" class="btn btn-danger">Delete</a>
                             </td>
-                            <th scope="row">ExampleFile.txt</th>
+                            <th scope="row" th:text="${file.filename}">filename</th>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(files)}">
+                            <td colspan="2">No files uploaded yet.</td>
                         </tr>
                         </tbody>
                     </table>

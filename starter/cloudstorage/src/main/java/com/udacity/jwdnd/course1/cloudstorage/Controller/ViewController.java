@@ -3,7 +3,9 @@ package com.udacity.jwdnd.course1.cloudstorage.Controller;
 import com.udacity.jwdnd.course1.cloudstorage.DTOs.SignupRequest;
 import com.udacity.jwdnd.course1.cloudstorage.DTOs.SignupResponse;
 import com.udacity.jwdnd.course1.cloudstorage.services.AuthService;
+import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.exceptions.UsernameAlreadyTakenException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ViewController {
     
     private final AuthService authService;
+    private final FileService fileService;
     
-    public ViewController(AuthService authService) {
+    public ViewController(AuthService authService, FileService fileService) {
         this.authService = authService;
+        this.fileService = fileService;
     }
 
     @GetMapping("/signup")
@@ -54,7 +58,8 @@ public class ViewController {
     }
     
     @GetMapping("/home")
-    public String homeView() {
+    public String homeView(Authentication authentication, Model model) {
+        model.addAttribute("files", fileService.getFiles(authentication));
         return "home";
     }
     
