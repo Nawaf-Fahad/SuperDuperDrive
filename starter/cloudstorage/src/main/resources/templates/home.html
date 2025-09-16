@@ -87,13 +87,24 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr th:each="note : ${notes}">
                             <td>
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <a class="btn btn-danger">Delete</a>
+                                <button type="button"
+                                        class="btn btn-success"
+                                        onclick="showNoteModalFromButton(this)"
+                                        th:attr="data-note-id=${note.id}, data-note-title=${note.title}, data-note-description=${note.description}">
+                                    Edit
+                                </button>
+                                <form th:action="@{'/note/' + ${note.id} + '/delete'}" method="post" style="display:inline;">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
                             </td>
-                            <th scope="row">Example Note Title</th>
-                            <td>Example Note Description</td>
+                            <th scope="row" th:text="${note.title}">Title</th>
+                            <td th:text="${note.description}">Description</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(notes)}">
+                            <td colspan="3">No notes yet.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -212,6 +223,13 @@
         $('#note-title').val(noteTitle || '');
         $('#note-description').val(noteDescription || '');
         $('#noteModal').modal('show');
+    }
+    function showNoteModalFromButton(btn) {
+        var $btn = $(btn);
+        var id = $btn.attr('data-note-id');
+        var title = $btn.attr('data-note-title');
+        var desc = $btn.attr('data-note-description');
+        showNoteModal(id, title, desc);
     }
     function showCredentialModal(credentialId, url, username, password) {
         $('#credential-id').val(credentialId || '');

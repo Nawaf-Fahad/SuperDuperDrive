@@ -45,6 +45,12 @@ public class NoteService {
                     .description(description)
                     .build();
             noteRepository.save(noteEntity);
+        } else {
+            var existing = noteRepository.findByIdAndUser_Id(noteId, user.getId())
+                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Note not found"));
+            existing.setTitle(title);
+            existing.setDescription(description);
+            noteRepository.save(existing);
         }
 
     }

@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.DTOs.SignupRequest;
 import com.udacity.jwdnd.course1.cloudstorage.DTOs.SignupResponse;
 import com.udacity.jwdnd.course1.cloudstorage.services.AuthService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.exceptions.UsernameAlreadyTakenException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,12 @@ public class ViewController {
     
     private final AuthService authService;
     private final FileService fileService;
+    private final NoteService noteService;
     
-    public ViewController(AuthService authService, FileService fileService) {
+    public ViewController(AuthService authService, FileService fileService, NoteService noteService) {
         this.authService = authService;
         this.fileService = fileService;
+        this.noteService = noteService;
     }
 
     @GetMapping("/signup")
@@ -60,6 +63,7 @@ public class ViewController {
     @GetMapping("/home")
     public String homeView(Authentication authentication, Model model) {
         model.addAttribute("files", fileService.getFiles(authentication));
+        model.addAttribute("notes", noteService.list(authentication));
         return "home";
     }
     
