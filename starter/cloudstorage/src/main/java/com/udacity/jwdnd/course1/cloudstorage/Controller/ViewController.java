@@ -39,7 +39,7 @@ public class ViewController {
         try {
             SignupResponse response = authService.signup(signupRequest);
             redirectAttributes.addFlashAttribute("success", true);
-            return "redirect:/signup";
+            return "redirect:/login";
         } catch (UsernameAlreadyTakenException e) {
             model.addAttribute("errorMessage", "Username already exists!");
             return "signup";
