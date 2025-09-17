@@ -160,14 +160,23 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr th:each="cred : ${credentials}">
                             <td>
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <a class="btn btn-danger">Delete</a>
+                                <button type="button" class="btn btn-success btn-credential-edit"
+                                        th:attr="data-credential-id=${cred.id}, data-url=${cred.url}, data-username=${cred.username}, data-password=${cred.password}">
+                                    Edit
+                                </button>
+                                <form th:action="@{'/credential/' + ${cred.id} + '/delete'}" method="post" style="display:inline;">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
                             </td>
-                            <th scope="row">Example Credential URL</th>
-                            <td>Example Credential Username</td>
-                            <td>Example Credential Password</td>
+                            <th scope="row" th:text="${cred.url}">URL</th>
+                            <td th:text="${cred.username}">Username</td>
+                            <td th:text="${cred.password}">Password</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(credentials)}">
+                            <td colspan="4">No credentials yet.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -238,6 +247,36 @@
         $('#credential-password').val(password || '');
         $('#credentialModal').modal('show');
     }
+    $(document).on('click', '.btn-credential-edit', function() {
+        var $btn = $(this);
+        var id = $btn.attr('data-credential-id');
+        var url = $btn.attr('data-url');
+        var username = $btn.attr('data-username');
+        var password = $btn.attr('data-password');
+        showCredentialModal(id, url, username, password);
+    });
+
+    // Keep the selected tab after redirects by honoring the URL hash
+    $(function() {
+        function activateTabFromHash() {
+            var hash = window.location.hash;
+            if (hash) {
+                var $link = $('a[data-toggle="tab"][href="' + hash + '"]');
+                if ($link.length) {
+                    $link.tab('show');
+                }
+            }
+        }
+        // On load and when hash changes
+        activateTabFromHash();
+        $(window).on('hashchange', activateTabFromHash);
+        // When user changes tabs, update the hash (without reloading)
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if (e.target && e.target.hash) {
+                history.replaceState(null, null, e.target.hash);
+            }
+        });
+    });
 </script>
 </body>
 </html>

@@ -24,3 +24,13 @@ CREATE TABLE IF NOT EXISTS FILES (
     filedata BYTEA,
     foreign key (userid) references USERS(userid)
 );
+
+-- Credentials for storing site logins per user
+CREATE TABLE IF NOT EXISTS CREDENTIALS (
+    credentialid serial PRIMARY KEY,
+    url VARCHAR(100) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    password VARCHAR(30) NOT NULL,
+    userid INT NOT NULL,
+    foreign key (userid) references USERS(userid)
+);
