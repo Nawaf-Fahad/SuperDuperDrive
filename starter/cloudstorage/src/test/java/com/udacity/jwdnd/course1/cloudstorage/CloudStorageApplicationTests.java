@@ -83,11 +83,9 @@ class CloudStorageApplicationTests {
 		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
 		buttonSignUp.click();
 
-		/* Check that the sign up was successful. 
-		// You may have to modify the element "success-msg" and the sign-up 
-		// success message below depening on the rest of your code.
-		*/
-		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
+		/* Check that the sign up was successful by verifying redirect to Login page */
+		webDriverWait.until(ExpectedConditions.titleContains("Login"));
+		Assertions.assertTrue(driver.getCurrentUrl().endsWith("/login"));
 	}
 
 	
@@ -201,6 +199,54 @@ class CloudStorageApplicationTests {
 
 	}
 
+	@Test
+	public void testHomeNotAccessibleWithoutLogin() {
+		// Navigate directly to /home without authentication
+		driver.get("http://localhost:" + this.port + "/home");
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		wait.until(ExpectedConditions.titleContains("Login"));
+		Assertions.assertEquals("Login", driver.getTitle());
+		Assertions.assertTrue(driver.getCurrentUrl().endsWith("/login"));
+	}
 
+	@Test
+	public void testSignupLoginAccessLogoutFlow() {
+		String unique = String.valueOf(System.currentTimeMillis());
+		String username = "user" + unique;
+		String password = "P@ssw0rd";
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+
+		// Sign up
+		driver.get("http://localhost:" + this.port + "/signup");
+		wait.until(ExpectedConditions.titleContains("Sign Up"));
+		driver.findElement(By.id("inputFirstName")).sendKeys("Test");
+		driver.findElement(By.id("inputLastName")).sendKeys("User");
+		driver.findElement(By.id("inputUsername")).sendKeys(username);
+		driver.findElement(By.id("inputPassword")).sendKeys(password);
+		driver.findElement(By.id("buttonSignUp")).click();
+
+		// After successful signup we should be on the login page
+		wait.until(ExpectedConditions.titleContains("Login"));
+		Assertions.assertTrue(driver.getCurrentUrl().endsWith("/login"));
+
+		// Log in
+		driver.findElement(By.id("inputUsername")).sendKeys(username);
+		driver.findElement(By.id("inputPassword")).sendKeys(password);
+		driver.findElement(By.id("login-button")).click();
+
+		// Verify we can access home
+		wait.until(ExpectedConditions.titleContains("Home"));
+		Assertions.assertEquals("Home", driver.getTitle());
+
+		// Log out (form posts to /logout)
+		WebElement logoutButton = driver.findElement(By.cssSelector("form[action='/logout'] button"));
+		logoutButton.click();
+
+		// After logout, accessing /home should redirect back to login
+		driver.get("http://localhost:" + this.port + "/home");
+		wait.until(ExpectedConditions.titleContains("Login"));
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
 
 }

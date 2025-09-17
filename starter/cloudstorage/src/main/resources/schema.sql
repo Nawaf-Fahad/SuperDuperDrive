@@ -1,3 +1,7 @@
+-- DELETE from USERS;
+-- DELETE from NOTES;
+-- DELETE from FILES;
+-- DELETE from CREDENTIALS;
 CREATE TABLE IF NOT EXISTS USERS (
   userid serial PRIMARY KEY,
   username VARCHAR(20) UNIQUE,
