@@ -163,7 +163,7 @@
                         <tr th:each="cred : ${credentials}">
                             <td>
                                 <button type="button" class="btn btn-success btn-credential-edit"
-                                        th:attr="data-credential-id=${cred.id}, data-url=${cred.url}, data-username=${cred.username}, data-password=${cred.password}">
+                                        th:attr="data-credential-id=${cred.id}, data-url=${cred.url}, data-username=${cred.username}">
                                     Edit
                                 </button>
                                 <form th:action="@{'/credential/' + ${cred.id} + '/delete'}" method="post" style="display:inline;">
@@ -252,8 +252,11 @@
         var id = $btn.attr('data-credential-id');
         var url = $btn.attr('data-url');
         var username = $btn.attr('data-username');
-        var password = $btn.attr('data-password');
-        showCredentialModal(id, url, username, password);
+        // Fetch decrypted password from server (owner-only)
+        fetch('/credential/' + encodeURIComponent(id) + '/decrypted', { credentials: 'same-origin' })
+            .then(function(res) { if (!res.ok) throw new Error('Failed to load password'); return res.text(); })
+            .then(function(pwd) { showCredentialModal(id, url, username, pwd); })
+            .catch(function() { showCredentialModal(id, url, username, ''); });
     });
 
     // Keep the selected tab after redirects by honoring the URL hash
