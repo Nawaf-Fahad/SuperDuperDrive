@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS CREDENTIALS (
     credentialid serial PRIMARY KEY,
     url VARCHAR(100) NOT NULL,
     username VARCHAR(30) NOT NULL,
-    password VARCHAR(30) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     userid INT NOT NULL,
     foreign key (userid) references USERS(userid)
 );

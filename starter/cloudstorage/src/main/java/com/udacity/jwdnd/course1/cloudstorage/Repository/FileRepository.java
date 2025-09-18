@@ -19,6 +19,9 @@ public interface FileRepository extends JpaRepository<FileEntity,Long> {
     @Query("select f from FileEntity f where f.id = :id and f.user.id = :userId")
     Optional<FileEntity> findByIdAndUsername(@Param("id") Long id, @Param("userId") Long userId);
 
+    // Check for duplicate filenames (case-insensitive) for a given user
+    Optional<FileEntity> findByUser_IdAndFilenameIgnoreCase(Long userId, String filename);
+
     @Modifying
     @Transactional
     @Query("delete from FileEntity f where f.id = :fileId and f.user.id = :userId")

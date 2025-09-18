@@ -55,6 +55,11 @@ public class FileService {
             throw new ResponseStatusException(BAD_REQUEST, "Filename is empty");
         }
 
+        // Prevent duplicate filenames for the same user (case-insensitive)
+        if (fileRepository.findByUser_IdAndFilenameIgnoreCase(user.getId(), filename).isPresent()) {
+            throw new ResponseStatusException(BAD_REQUEST, "A file with this name already exists");
+        }
+
         final byte[] bytes;
         try {
             bytes = file.getBytes();
