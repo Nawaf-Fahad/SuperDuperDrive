@@ -35,6 +35,7 @@ public class NoteController {
                          RedirectAttributes ra) {
         noteService.deleteNote(auth, id);
         ra.addFlashAttribute("message", "Note deleted.");
+        ra.addFlashAttribute("messageClass", "alert-danger");
         return "redirect:/home#nav-notes";
     }
 }

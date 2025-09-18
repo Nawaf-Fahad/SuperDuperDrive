@@ -32,13 +32,14 @@ public class FileController {
                          RedirectAttributes redirectAttributes) {
         try {
             fileService.upload(authentication, file);
+            redirectAttributes.addFlashAttribute("message", "File uploaded.");
             redirectAttributes.addFlashAttribute("success", true);
         } catch (ResponseStatusException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Upload failed. Please try again.");
         }
-        return "redirect:/home";
+        return "redirect:/home#nav-files";
     }
 
     @GetMapping("/view/{id}")
@@ -66,10 +67,12 @@ public class FileController {
                          RedirectAttributes redirectAttributes) {
         try {
             fileService.delete(authentication, id);
+            redirectAttributes.addFlashAttribute("message", "File deleted.");
+            redirectAttributes.addFlashAttribute("messageClass", "alert-danger");
             redirectAttributes.addFlashAttribute("success", true);
         } catch (ResponseStatusException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getReason());
         }
-        return "redirect:/home";
+        return "redirect:/home#nav-files";
     }
 }

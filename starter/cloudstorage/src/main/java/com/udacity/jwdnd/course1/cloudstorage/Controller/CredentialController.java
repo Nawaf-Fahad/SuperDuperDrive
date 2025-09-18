@@ -35,6 +35,7 @@ public class CredentialController {
                          RedirectAttributes ra) {
         credentialService.delete(auth, id);
         ra.addFlashAttribute("message", "Credential deleted.");
+        ra.addFlashAttribute("messageClass", "alert-danger");
         return "redirect:/home#nav-credentials";
     }
 
